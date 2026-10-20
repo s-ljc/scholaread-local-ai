@@ -26,6 +26,13 @@
 - 界面里的 "credits" 数字是装饰性的。
 - 补丁基于 **ScholarRead 1.9.17（build 944159）**，其他版本需重新定位补丁点。
 
+## 预编译包（懒人路线）
+
+不想搭构建环境？直接下载本仓库 [Releases](../../releases) 里的 `scholaread-localai-1.9.17.apk`（基于 1.9.17 / build 944159 打好全部补丁并签名）。
+
+- **调试签名**，与官方签名不同：首次安装需先卸载官方版（本地登录会丢，重新登录即可；之后覆盖安装不丢数据）
+- 属于便利构建的**非官方修改版**，请勿二次分发镜像；出问题以自行构建为准
+
 ## 构建
 
 前置：JDK 17+、apktool 2.10+、Android build-tools（`d8.jar`）+ `android.jar`(API 34)、uber-apk-signer、Python 3、Git for Windows，以及你自己的原版 APK。
