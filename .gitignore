@@ -1,0 +1,14 @@
+# build artifacts
+out/
+*.apk
+*.apk.idsig
+*.keystore
+
+# tool trees
+tools/
+__pycache__/
+*.pyc
+
+# local dumps / logs
+*.log
+agent_dump/

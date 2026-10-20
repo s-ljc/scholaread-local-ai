@@ -1,0 +1,229 @@
+﻿git : warning: in the working copy of 'tmp/translate_orig.js', LF will be replaced by CRLF the next time Git touches it
+At line:10 char:6
++ $d = git diff --no-index --src-prefix=a/ --dst-prefix=b/ --unified=3  ...
++      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning: in the... Git touches it:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+diff --git a/assets/pdf-static-res/js/translate.js b/assets/pdf-static-res/js/translate.js
+index 4fc7d52..b0d2149 100644
+--- a/assets/pdf-static-res/js/translate.js
++++ b/assets/pdf-static-res/js/translate.js
+@@ -1,3 +1,183 @@
++/* ============================================================
++ * LOCAL AI PATCH (built by REA analysis, morluto/rea)
++ * 翻译直连自定义 OpenAI 兼容服务；页面右下角 🤖 按钮可在
++ * App 内修改 baseUrl / apiKey / model（存 cookie，重启不丢）。
++ * ============================================================ */
++const LOCAL_AI_DEFAULTS = {
++    baseUrl: 'https://your-tunnel.example.com/strata/v1',
++    apiKey: 'your-api-key',
++    model: 'your-model-name',
++    relay: 'http://127.0.0.1:8787',
++    temperature: 0.3,
++    maxTokens: 4096
++};
++const AI_CFG_COOKIE = 'scholaread_local_ai_cfg';
++
++function aiNormalizeBaseUrl(u) {
++    u = String(u || '').trim().replace(/\/+$/, '');
++    u = u.replace(/\/chat\/completions$/, '');
++    if (!/\/v\d+$/.test(u)) u += '/v1';
++    return u;
++}
++
++function aiCfgGet() {
++    try {
++        const m = document.cookie.match(new RegExp('(?:^|;\\s*)' + AI_CFG_COOKIE + '=([^;]*)'));
++        if (m && m[1]) {
++            const saved = JSON.parse(decodeURIComponent(m[1]));
++            return {
++                baseUrl: saved.baseUrl || LOCAL_AI_DEFAULTS.baseUrl,
++                apiKey: saved.apiKey != null ? saved.apiKey : LOCAL_AI_DEFAULTS.apiKey,
++                model: saved.model || LOCAL_AI_DEFAULTS.model,
++                relay: saved.relay != null ? saved.relay : LOCAL_AI_DEFAULTS.relay,
++                temperature: LOCAL_AI_DEFAULTS.temperature,
++                maxTokens: LOCAL_AI_DEFAULTS.maxTokens
++            };
++        }
++    } catch (e) {}
++    return Object.assign({}, LOCAL_AI_DEFAULTS);
++}
++
++function aiCfgSet(cfg) {
++    try {
++        document.cookie = AI_CFG_COOKIE + '=' + encodeURIComponent(JSON.stringify({
++            baseUrl: cfg.baseUrl, apiKey: cfg.apiKey, model: cfg.model, relay: cfg.relay
++        })) + '; path=/; max-age=31536000';
++        return true;
++    } catch (e) { return false; }
++}
++
++function aiFetchUrl(cfg) {
++    const target = aiNormalizeBaseUrl(cfg.baseUrl) + '/chat/completions';
++    const relay = String(cfg.relay || '').trim().replace(/\/+$/, '');
++    return relay ? relay + '/relay/' + encodeURIComponent(target) : target;
++}
++
++/* ---------- translation cache (memory + IndexedDB, survives reopen) ---------- */
++const aiMemCache = new Map();
++let aiDbP = null;
++function aiDb() {
++    if (aiDbP) return aiDbP;
++    aiDbP = new Promise(function (res) {
++        try {
++            const rq = indexedDB.open('scholaread_ai_cache', 1);
++            rq.onupgradeneeded = function () { rq.result.createObjectStore('t'); };
++            rq.onsuccess = function () { res(rq.result); };
++            rq.onerror = function () { res(null); };
++            setTimeout(function () { res(null); }, 3000);
++        } catch (e) { res(null); }
++    });
++    return aiDbP;
++}
++function aiCacheKey(model, lang, text) {
++    const s = model + '|' + lang + '|' + text;
++    let h = 0x811c9dc5;
++    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
++    return (h >>> 0).toString(36) + '_' + s.length;
++}
++function aiCacheGet(key) {
++    if (aiMemCache.has(key)) return Promise.resolve(aiMemCache.get(key));
++    return aiDb().then(function (db) {
++        if (!db) return null;
++        return new Promise(function (res) {
++            try {
++                const rq = db.transaction('t', 'readonly').objectStore('t').get(key);
++                rq.onsuccess = function () { const v = rq.result || null; if (v) aiMemCache.set(key, v); res(v); };
++                rq.onerror = function () { res(null); };
++            } catch (e) { res(null); }
++        });
++    });
++}
++function aiCacheSet(key, val) {
++    aiMemCache.set(key, val);
++    aiDb().then(function (db) {
++        if (!db) return;
++        try { db.transaction('t', 'readwrite').objectStore('t').put(val, key); } catch (e) {}
++    });
++}
++
++function localAiChatOneRaw(text, targetLanguage) {
++    const cfg = aiCfgGet();
++    const sys = 'You are a professional academic translator. Translate the user text into '
++        + targetLanguage
++        + '. Preserve paragraph structure and any LaTeX/HTML markup. Output ONLY the translation, no explanations.';
++    return fetch(aiFetchUrl(cfg), {
++        method: 'POST',
++        headers: {
++            'Content-Type': 'application/json',
++            'Authorization': 'Bearer ' + cfg.apiKey
++        },
++        body: JSON.stringify({
++            model: cfg.model,
++            temperature: cfg.temperature,
++            max_tokens: cfg.maxTokens,
++            chat_template_kwargs: { enable_thinking: false },
++            messages: [
++                { role: 'system', content: sys },
++                { role: 'user', content: text }
++            ]
++        })
++    }).then(function (r) {
++        if (!r.ok) throw new Error('HTTP ' + r.status + ' from local AI');
++        return r.json();
++    }).then(function (j) {
++        const c = j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
++        if (!c) throw new Error('empty completion from local AI');
++        return String(c).trim();
++    });
++}
++
++function localAiChatOne(text, targetLanguage) {
++    const cfg = aiCfgGet();
++    const key = aiCacheKey(cfg.model, targetLanguage, text);
++    return aiCacheGet(key).then(function (hit) {
++        if (hit) return hit;
++        return localAiChatOneRaw(text, targetLanguage).then(function (out) {
++            aiCacheSet(key, out);
++            return out;
++        });
++    });
++}
++
++function localAiTranslate(texts, targetLanguage) {
++    return Promise.all(texts.map(function (t) { return localAiChatOne(t, targetLanguage); }));
++}
++
++/* ---------- test button (settings live in app Settings page) ---------- */
++function aiToast(msg, ok) {
++    let t = document.getElementById('local-ai-toast');
++    if (!t) {
++        t = document.createElement('div');
++        t.id = 'local-ai-toast';
++        t.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:140px;z-index:2147483600;max-width:80%;padding:10px 16px;border-radius:8px;font-size:14px;color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.4);word-break:break-all;';
++        document.body.appendChild(t);
++    }
++    t.style.background = ok ? 'rgba(20,120,60,.92)' : 'rgba(180,40,40,.92)';
++    t.textContent = msg;
++    t.style.display = 'block';
++    clearTimeout(t._timer);
++    t._timer = setTimeout(function () { t.style.display = 'none'; }, 4000);
++}
++
++function aiInjectGear() {
++    if (!document.body) { document.addEventListener('DOMContentLoaded', aiInjectGear); return; }
++    if (document.getElementById('local-ai-gear')) return;
++    const btn = document.createElement('div');
++    btn.id = 'local-ai-gear';
++    btn.textContent = '\ud83e\udd16';
++    btn.style.cssText = 'position:fixed;right:14px;bottom:90px;z-index:2147483400;width:42px;height:42px;line-height:42px;text-align:center;background:rgba(26,86,184,.8);color:#fff;border-radius:50%;font-size:22px;box-shadow:0 2px 8px rgba(0,0,0,.35);cursor:pointer;user-select:none;';
++    btn.onclick = function () {
++        aiToast('Testing connection...', true);
++        localAiChatOne('Hello, are you working?', 'Simplified Chinese').then(function (c) {
++            aiToast('AI connection OK: ' + c.slice(0, 60), true);
++        }).catch(function (e) {
++            aiToast('AI connection failed: ' + (e && e.message || e), false);
++        });
++    };
++    document.body.appendChild(btn);
++}
++aiInjectGear();
++/* ================= END LOCAL AI PATCH ================= */
+ /**
+  * 翻译开关（默认关闭）
+  */
+@@ -193,13 +373,25 @@ function throttledTranslate(ids, sourceTextStruct, language, translateDataPayloa
+                 const jsonDataString = JSON.stringify(translateDataPayload);
+                 let base64PayloadToSend = base64Encode(jsonDataString);
+ 
+-                try {
+-                    // 调用原生方法，当前是否是重排预览模式、传递数据、回调函数名
+-                    window.android?.onHandleTranslateRequest(isReflowMode, base64PayloadToSend, callbackName);
+-                } catch (e) {
+-                    reject(new Error(JSON.stringify({ 'ids': ids, 'error': e, 'statusCode': 400 })));
+-                    delete window[callbackName];
+-                }
++                // ===== LOCAL AI PATCH: 直连本地 OpenAI 兼容服务 =====
++                localAiTranslate(originText.texts, translateDataPayload.target_language).then(function (translatedArray) {
++                    var payload = {
++                        status: 'success',
++                        statusCode: 200,
++                        data: {
++                            translation_text: {
++                                id: originText.id,
++                                text: translatedArray.join(''),
++                                textArray: translatedArray,
++                                filtered: false
++                            }
++                        }
++                    };
++                    window[callbackName](base64Encode(JSON.stringify(payload)));
++                }).catch(function (e) {
++                    console.error('local ai translate failed:', e);
++                    window[callbackName](base64Encode(JSON.stringify({ status: 'error', statusCode: 500 })));
++                });
+             }
+         }
+         // 优先使用缓存
+

@@ -1,0 +1,40 @@
+﻿diff --git a/smali_classes2/com/scholaread/aichat/c.smali b/smali_classes2/com/scholaread/aichat/c.smali
+index 47f9285..9067145 100644
+--- a/smali_classes2/com/scholaread/aichat/c.smali
++++ b/smali_classes2/com/scholaread/aichat/c.smali
+@@ -1733,6 +1733,8 @@
+ 
+     if-nez v3, :cond_3
+ 
++    invoke-static {v2}, Lcom/scholaread/aicfg/AiCfgPanel;->logLine(Ljava/lang/Object;)V
++
+     goto :goto_0
+ 
+     .line 294
+@@ -1768,6 +1770,8 @@
+ 
+     check-cast v3, Lcom/scholaread/model/api/AIChatResponse;
+ 
++    invoke-static {v3}, Lcom/scholaread/aicfg/AiCfgPanel;->logResp(Ljava/lang/Object;)V
++
+     .line 298
+     invoke-interface {p3, v3}, Lio/reactivex/rxjava3/core/ObservableEmitter;->onNext(Ljava/lang/Object;)V
+ 
+@@ -2636,15 +2640,7 @@
+     iput-object v2, v1, Lcom/scholaread/model/api/AIChatRequestBody$QAConfig;->target:Ljava/lang/String;
+ 
+     .line 279
+-    invoke-static {}, Lcom/scholaread/api/e;->vb()Lcom/scholaread/api/e;
+-
+-    move-result-object v1
+-
+-    invoke-virtual {v1}, Lcom/scholaread/api/e;->rda()Lcom/scholaread/api/ApiServer;
+-
+-    move-result-object v1
+-
+-    invoke-interface {v1, v0}, Lcom/scholaread/api/ApiServer;->createAIChat(Lcom/scholaread/model/api/AIChatRequestBody;)Lio/reactivex/rxjava3/core/Observable;
++    invoke-static {v0}, Lcom/scholaread/aicfg/AiChatBridge;->chat(Lcom/scholaread/model/api/AIChatRequestBody;)Lio/reactivex/rxjava3/core/Observable;
+ 
+     move-result-object v1
+ 
+
