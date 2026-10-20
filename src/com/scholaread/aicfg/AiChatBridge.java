@@ -140,9 +140,10 @@ public class AiChatBridge {
         kw.put("enable_thinking", false);
         req.put("chat_template_kwargs", kw);
 
-        String target = baseUrl + "/chat/completions";
-        String url = relay.isEmpty() ? target
-                : relay + "/relay/" + URLEncoder.encode(target, "UTF-8");
+        // Native HttpURLConnection has no CORS constraint: always talk to the
+        // user's endpoint directly. The localhost relay is only needed by the
+        // translate.js WebView (browser fetch), never by native code.
+        String url = baseUrl + "/chat/completions";
 
         HttpURLConnection c = (HttpURLConnection) new java.net.URL(url).openConnection();
         c.setConnectTimeout(15000);
