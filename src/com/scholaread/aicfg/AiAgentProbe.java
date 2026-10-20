@@ -174,6 +174,18 @@ public class AiAgentProbe {
         @JavascriptInterface
         public void aiFetchAsync(final int id, final String url, final String body,
                 final String auth) {
+            doFetch(w, id, url, body, auth);
+        }
+    }
+
+    /**
+     * Async HTTP POST from JS without CORS pain: runs on a worker thread,
+     * delivers {"ok":bool,"status":N,"body":"..."} to window.__aiFetchDone(id, env).
+     * Shared by the research-page bridge (__aiLocal) and the translation
+     * bridge (__aiTranslate) so neither needs the localhost relay.
+     */
+    static void doFetch(final WebView w, final int id, final String url, final String body,
+            final String auth) {
             new Thread(new Runnable() {
                 public void run() {
                     JSONObject env = new JSONObject();
@@ -228,7 +240,6 @@ public class AiAgentProbe {
                     }
                 }
             }).start();
-        }
     }
 
     public static void wrap(final WebView w) {

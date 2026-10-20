@@ -8,6 +8,7 @@ git apply -p1 ../patches/smali/AIChatDialogFragment.smali.patch
 git apply -p1 ../patches/smali/c.smali.patch
 git apply -p1 ../patches/smali/ChatStudySessionView.smali.patch
 git apply -p1 ../patches/smali/SettingsActivity.smali.patch
+git apply -p1 ../patches/smali/PDFWidget.smali.patch
 git apply -p1 ../patches/translate.js.patch
 cp ../patches/smali/AiCfgHook.smali smali_classes2/com/scholaread/aicfg/AiCfgHook.smali
 ```
@@ -23,7 +24,8 @@ smali, and `translate.js.patch` replaces the native bridge call in
 | `AIChatDialogFragment.smali` | chat dialog view | `AiCfgPanel.attachChat()` → 🤖 model chip in the input bar |
 | `ChatStudySessionView.smali` | research-tab WebView | `AiAgentProbe.wrap()` → JS shim + fake agent WebSocket + native fetch bridge |
 | `SettingsActivity.smali` | settings page | `AiCfgHook.attach()` → "自定义 AI 接口" entry row |
-| `translate.js.patch` | PDF translation JS | direct OpenAI-compatible fetch, in-page 🤖 config button |
+| `PDFWidget.smali` | PDF reader WebView | attach `AiTranslateBridge` as `window.__aiTranslate` → native fetch for translation (no CORS/relay) |
+| `translate.js.patch` | PDF translation JS | direct OpenAI-compatible fetch (prefers the `__aiTranslate` native bridge, relay fallback), in-page 🤖 config button |
 
 If a patch fails to apply on another app version, re-locate the hook: each
 patch has 1–3 tiny hunks; search for the surrounding method signatures

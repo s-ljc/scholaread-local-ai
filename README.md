@@ -12,10 +12,10 @@
 |---|---|---|
 | 文档 AI 对话（阅读器 AI Chat 标签） | 原生替换官方 chat 接口，携带 App 的文档背景上下文 + 本地滚动 12 轮历史 | ❌ 原生 HTTP 直连 |
 | 研究页 Agent（Research 标签） | 模拟官方 Agent WebSocket 协议（run.started / message_delta / run.completed…），流式输出、用户气泡、多轮上下文 | ❌ 原生桥直连（JS→native HTTP） |
-| 页面翻译 | 替换 translate.js 的桥调用为直连 fetch | 仅当你的服务器不支持 CORS 时用 `scripts/relay.mjs` |
+| 页面翻译 | 替换 translate.js 的桥调用，优先走 `__aiTranslate` 原生桥直发你的接口 | ❌ 原生桥直连（中继仅作兜底） |
 | 配置管理 | 设置页新增「自定义 AI 接口」行：增删改接口、拉取模型列表（同时测连接）、设为使用中；各页面右下角 🤖 chip 快速切模型 | — |
 
-**手机和电脑在同一 Wi-Fi 时，直接填局域网地址（如 `http://192.168.1.10:8000/v1`）即可，不需要 ngrok、不需要电脑常驻任何进程。** 公网访问（手机用移动网络时）推荐 ngrok / cloudflare tunnel 把接口暴露成 https。
+**手机和电脑在同一 Wi-Fi 时，直接填局域网地址（如 `http://192.168.1.10:8000/v1`）即可，不需要 ngrok、不需要电脑常驻任何进程。** 公网访问（手机用移动网络时）推荐 ngrok / cloudflare tunnel 把接口暴露成 https。三大 AI 功能全部走原生 HTTP（无 CORS 限制），**拔掉 USB 线照常工作**；`scripts/relay.mjs` 只是翻译的兜底通道，正常情况下不需要运行。
 
 ## 已知限制
 
@@ -57,7 +57,7 @@ adb install -r out\repacked-debug-signed.apk
 ## 工作原理（简述）
 
 - 新增 `classes5.dex`（本仓库 `src/` 编译产物），ART 原生加载，无需改 manifest。
-- 4 处 smali 补丁挂接原生入口（chat 替换、chat 视图挂载、研究页 WebView 接管、设置页入口），外加 1 个纯新增 smali 类；`assets/.../translate.js` 一处 JS 补丁。见 [patches/README.md](patches/README.md)。
+- 5 处 smali 补丁挂接原生入口（chat 替换、chat 视图挂载、研究页 WebView 接管、设置页入口、阅读器 WebView 挂翻译桥），外加 1 个纯新增 smali 类；`assets/.../translate.js` 一处 JS 补丁。见 [patches/README.md](patches/README.md)。
 - 研究页：注入 JS shim 伪造官方 Agent WebSocket 协议；AI 请求经 `__aiLocal.aiFetchAsync` 原生桥直发你的接口（无 CORS 限制）。协议细节见 [docs/PROTOCOL.md](docs/PROTOCOL.md)。
 
 ## 目录
