@@ -1,4 +1,4 @@
-﻿diff --git a/smali_classes2/com/scholaread/chatstudy/ChatStudySessionView.smali b/smali_classes2/com/scholaread/chatstudy/ChatStudySessionView.smali
+diff --git a/smali_classes2/com/scholaread/chatstudy/ChatStudySessionView.smali b/smali_classes2/com/scholaread/chatstudy/ChatStudySessionView.smali
 index 4a86b40..4dc9381 100644
 --- a/smali_classes2/com/scholaread/chatstudy/ChatStudySessionView.smali
 +++ b/smali_classes2/com/scholaread/chatstudy/ChatStudySessionView.smali

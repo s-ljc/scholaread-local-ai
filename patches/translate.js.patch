@@ -1,4 +1,4 @@
-﻿git : warning: in the working copy of 'tmp/translate_orig.js', LF will be replaced by CRLF the next time Git touches it
+git : warning: in the working copy of 'tmp/translate_orig.js', LF will be replaced by CRLF the next time Git touches it
 At line:10 char:6
 + $d = git diff --no-index --src-prefix=a/ --dst-prefix=b/ --unified=3  ...
 +      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
