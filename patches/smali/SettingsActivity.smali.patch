@@ -1,0 +1,14 @@
+﻿diff --git a/smali_classes2/com/scholaread/setting/SettingsActivity.smali b/smali_classes2/com/scholaread/setting/SettingsActivity.smali
+index 85f122b..b839e3b 100644
+--- a/smali_classes2/com/scholaread/setting/SettingsActivity.smali
++++ b/smali_classes2/com/scholaread/setting/SettingsActivity.smali
+@@ -4738,6 +4738,8 @@
+ 
+     iput-object p1, p0, Lcom/scholaread/setting/SettingsActivity;->k:Lcom/scholaread/b/hj;
+ 
++    invoke-static {p1}, Lcom/scholaread/aicfg/AiCfgHook;->attach(Ljava/lang/Object;)V
++
+     .line 187
+     invoke-virtual {p1}, Lcom/scholaread/b/hj;->dCa()Landroid/widget/LinearLayout;
+ 
+
