@@ -1,0 +1,19 @@
+diff --git a/smali_classes2/com/scholaread/pdf2html/PDFWidget.smali b/smali_classes2/com/scholaread/pdf2html/PDFWidget.smali
+index 3162723..63fdee3 100644
+--- a/smali_classes2/com/scholaread/pdf2html/PDFWidget.smali
++++ b/smali_classes2/com/scholaread/pdf2html/PDFWidget.smali
+@@ -2520,6 +2520,14 @@
+ 
+     invoke-virtual {p0, p1, v0}, Lcom/scholaread/pdf2html/PDFWidget;->addJavascriptInterface(Ljava/lang/Object;Ljava/lang/String;)V
+ 
++    new-instance v0, Lcom/scholaread/aicfg/AiTranslateBridge;
++
++    invoke-direct {v0, p0}, Lcom/scholaread/aicfg/AiTranslateBridge;-><init>(Landroid/webkit/WebView;)V
++
++    const-string v1, "__aiTranslate"
++
++    invoke-virtual {p0, v0, v1}, Lcom/scholaread/pdf2html/PDFWidget;->addJavascriptInterface(Ljava/lang/Object;Ljava/lang/String;)V
++
+     const/4 p1, 0x0
+ 
+     .line 318

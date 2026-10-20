@@ -68,7 +68,10 @@ disappears.
 - AI transport: `__aiLocal.aiFetchAsync(id, url, body, auth)` — native
   `HttpURLConnection` on a worker thread, result delivered back via
   `evaluateJavascript(window.__aiFetchDone(id, env))`. No CORS, no localhost
-  relay. (A relay fallback path remains for debugging.)
+  relay. (A relay fallback path remains for debugging.) The PDF reader WebView
+  gets the same transport as `__aiTranslate.aiFetchAsync`
+  (`AiTranslateBridge`, shared `AiAgentProbe.doFetch`), which translate.js
+  prefers over browser fetch — translation is relay-free too.
 - Model switching: `addJavascriptInterface(Bridge, "__aiLocal")`
   (`profiles` / `active` / `switchTo`, shared SharedPreferences + cookie with
   the native chat panel).
