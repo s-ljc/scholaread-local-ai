@@ -36,9 +36,9 @@ public class AiCfgPanel {
     static final String COOKIE_HOST = "https://com.scholaread.pdf2html";
     static final String COOKIE_NAME = "scholaread_local_ai_cfg";
 
-    static final String DEF_BASE = "https://your-tunnel.example.com/strata/v1";
-    static final String DEF_MODEL = "your-model-name";
-    static final String DEF_KEY = "your-api-key";
+    static final String DEF_BASE = "http://127.0.0.1:8000/v1";
+    static final String DEF_MODEL = "";
+    static final String DEF_KEY = "";
     static final String DEF_RELAY = "http://127.0.0.1:8787";
 
     static Dialog sOpen;

@@ -1,12 +1,12 @@
 git : warning: in the working copy of 'tmp/translate_orig.js', LF will be replaced by CRLF the next time Git touches it
-At line:8 char:7
+At line:6 char:7
 + $d2 = git diff --no-index --src-prefix=a/ --dst-prefix=b/ --unified=3 ...
 +       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     + CategoryInfo          : NotSpecified: (warning: in the... Git touches it:String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
  
 diff --git a/assets/pdf-static-res/js/translate.js b/assets/pdf-static-res/js/translate.js
-index 4fc7d52..f43f921 100644
+index 4fc7d52..e93e4d6 100644
 --- a/assets/pdf-static-res/js/translate.js
 +++ b/assets/pdf-static-res/js/translate.js
 @@ -1,3 +1,218 @@
@@ -16,9 +16,9 @@ index 4fc7d52..f43f921 100644
 + * App 内修改 baseUrl / apiKey / model（存 cookie，重启不丢）。
 + * ============================================================ */
 +const LOCAL_AI_DEFAULTS = {
-+    baseUrl: 'https://your-tunnel.example.com/strata/v1',
-+    apiKey: 'your-api-key',
-+    model: 'your-model-name',
++    baseUrl: 'http://127.0.0.1:8000/v1',
++    apiKey: '',
++    model: '',
 +    relay: 'http://127.0.0.1:8787',
 +    temperature: 0.3,
 +    maxTokens: 4096
