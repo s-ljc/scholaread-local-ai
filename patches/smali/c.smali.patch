@@ -1,4 +1,4 @@
-﻿diff --git a/smali_classes2/com/scholaread/aichat/c.smali b/smali_classes2/com/scholaread/aichat/c.smali
+diff --git a/smali_classes2/com/scholaread/aichat/c.smali b/smali_classes2/com/scholaread/aichat/c.smali
 index 47f9285..9067145 100644
 --- a/smali_classes2/com/scholaread/aichat/c.smali
 +++ b/smali_classes2/com/scholaread/aichat/c.smali

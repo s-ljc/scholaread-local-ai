@@ -1,4 +1,4 @@
-﻿diff --git a/smali_classes2/com/scholaread/aichat/AIChatDialogFragment.smali b/smali_classes2/com/scholaread/aichat/AIChatDialogFragment.smali
+diff --git a/smali_classes2/com/scholaread/aichat/AIChatDialogFragment.smali b/smali_classes2/com/scholaread/aichat/AIChatDialogFragment.smali
 index 157d72d..f426116 100644
 --- a/smali_classes2/com/scholaread/aichat/AIChatDialogFragment.smali
 +++ b/smali_classes2/com/scholaread/aichat/AIChatDialogFragment.smali

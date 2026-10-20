@@ -1,4 +1,4 @@
-﻿diff --git a/smali_classes2/com/scholaread/setting/SettingsActivity.smali b/smali_classes2/com/scholaread/setting/SettingsActivity.smali
+diff --git a/smali_classes2/com/scholaread/setting/SettingsActivity.smali b/smali_classes2/com/scholaread/setting/SettingsActivity.smali
 index 85f122b..b839e3b 100644
 --- a/smali_classes2/com/scholaread/setting/SettingsActivity.smali
 +++ b/smali_classes2/com/scholaread/setting/SettingsActivity.smali
