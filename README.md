@@ -1,10 +1,12 @@
-# ScholarRead Local AI
+# ScholarRead Local AI（非官方补丁 / unofficial mod）
+
+> **免责声明**：本项目是**非官方**开源补丁，与 ScholarRead 官方**无任何隶属、赞助或背书关系**。"ScholarRead" 名称与 logo 均为其所有者商标，本仓库仅作**指示性使用**（nominative use，说明补丁适用对象）。仓库只含自研代码与 diff 补丁，**不含官方 APK / dex / 资源 / 反编译代码**；请自行构建、**勿分发构建产物 APK**。
+>
+> **长期方向**：净室独立客户端 **PaperLocal**（纯客户端、不连官方服务器、不依赖任何官方代码）——本补丁版是通往它的过渡形态与协议资料库。
 
 让 [ScholarRead](https://www.scholaread.cn/)（安卓 PDF 文献阅读器）里的所有 AI 功能——**文档对话、研究页 Agent、页面翻译**——改接你自己部署的模型（vLLM / Ollama / LM Studio / llama.cpp 等任何 OpenAI 兼容接口）。
 
 官方 AI 按额度收费，本项目把它整个换成你自己的 API：一个 `baseUrl` + `apiKey` + `model` 就全部接管，App 内可视化配置、多接口管理、一键切换模型。
-
-> 本项目是逆向补丁（mod）：**不含 ScholarRead 的 APK / dex / 资源**，请自备原版安装包。详见 [LICENSE](LICENSE) 与下方「版权说明」。
 
 ## 功能
 
