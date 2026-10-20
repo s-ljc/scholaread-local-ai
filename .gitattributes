@@ -1,0 +1,7 @@
+# patches must stay LF or `git apply` may choke on Windows checkouts
+*.patch text eol=lf
+*.smali text eol=lf
+*.mjs   text eol=lf
+*.py    text eol=lf
+*.java  text eol=lf
+*.ps1   text eol=crlf
